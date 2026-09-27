@@ -37,13 +37,79 @@ function dots --description "Review and push already-captured public dotfile cha
     or return 1
 
     # Validated one-button capture: per-file guard checks before mutation.
-    # Phase 1 validates all home targets with zero mutation; Phase 2 re-adds
-    # validated targets only. Hooks, binaries, new paths abort to manual dots-capture.
+    # Untracked source files that are chezmoi-managed and fully clean are
+    # auto-allowed (content scans + unapproved-path-only); anything else aborts.
+    # Modified home targets go through validate-then-re-add below. Hooks,
+    # binaries, and secrets always abort to manual dots-capture.
     set -l untracked (git -C $repo ls-files --others --exclude-standard)
+    set -l auto_new_sources
     if test (count $untracked) -gt 0
-        echo "dots: untracked files require explicit review; nothing was staged" >&2
-        printf '  %s\n' $untracked >&2
-        return 1
+        if not type -q chezmoi
+            echo "dots: untracked files require explicit review; nothing was staged" >&2
+            printf '  %s\n' $untracked >&2
+            return 1
+        end
+        set -l managed (chezmoi managed 2>/dev/null)
+        for u in $untracked
+            if string match -q -r '^\.\./' -- "$u"; or string match -q -r '^/' -- "$u"
+                echo "dots: untracked files require explicit review; nothing was staged" >&2
+                printf '  %s\n' $untracked >&2
+                return 1
+            end
+            set -l tgt (chezmoi target-path -- "$repo/$u" 2>/dev/null)
+            if test $status -ne 0; or not set -q tgt[1]
+                echo "dots: $u is not a chezmoi target; explicit review required" >&2
+                return 1
+            end
+            set -l home_rel (realpath --relative-to="$HOME" -- "$tgt[1]" 2>/dev/null)
+            if test -z "$home_rel"; or string match -q -r '^\.\./' -- "$home_rel"
+                echo "dots: $u maps outside home; explicit review required" >&2
+                return 1
+            end
+            if not contains -- "$home_rel" $managed
+                echo "dots: $u is not chezmoi-managed; explicit review required" >&2
+                return 1
+            end
+            if not string match -q -- '.config/*' "$home_rel"
+                echo "dots: $u outside auto-capture root; use dots-capture explicitly" >&2
+                return 1
+            end
+            if test -L "$tgt[1]"; or not test -f "$tgt[1]"
+                echo "dots: $u needs explicit review (not a regular file); use dots-capture" >&2
+                return 1
+            end
+            set -l tout (python3 $guard --repo $repo --policy $policy --check-target "$tgt[1]" --target-root "$HOME" 2>&1)
+            or begin
+                if string match -q -- '*guard-error*' $tout
+                    printf '%s\n' $tout >&2
+                    return 1
+                end
+                printf '%s\n' $tout >&2
+                echo "dots: $u needs explicit review; run: dots-capture ~/$home_rel" >&2
+                return 1
+            end
+            set -l nout (python3 $guard --repo $repo --policy $policy --check-path "$repo/$u" 2>&1)
+            or begin
+                if string match -q -- '*guard-error*' $nout
+                    printf '%s\n' $nout >&2
+                    return 1
+                end
+                set -l want "unapproved-path: \"$u\""
+                if test (count $nout) -eq 1; and test "$nout[1]" = "$want"
+                    echo "dots: auto-allowing reviewed-clean new path: $u" >&2
+                    python3 $guard --repo $repo --policy $policy --allow-path "$repo/$u" --accept-path
+                    or begin
+                        echo "dots: auto-allow failed; use dots-capture explicitly ~/$home_rel" >&2
+                        return 1
+                    end
+                else
+                    printf '%s\n' $nout >&2
+                    echo "dots: $u needs explicit review; run: dots-capture ~/$home_rel" >&2
+                    return 1
+                end
+            end
+            set -a auto_new_sources "$repo/$u"
+        end
     end
 
     if type -q chezmoi
@@ -123,8 +189,23 @@ function dots --description "Review and push already-captured public dotfile cha
                         printf '%s\n' $pout >&2
                         return 1
                     end
-                    set -a skipped_auto "$rel (needs allowlist review)"
-                    continue
+                    # Auto-allowlist iff the file is content-clean and the ONLY
+                    # finding is unapproved-path. Anything else (denied, secret,
+                    # binary, oversize) still needs explicit dots-capture.
+                    # print_violations renders: unapproved-path: "<repo-rel>"
+                    set -l want "unapproved-path: \"$src_rel\""
+                    if test (count $pout) -eq 1; and test "$pout[1]" = "$want"
+                        echo "dots: auto-allowing reviewed-clean new path: $src_rel" >&2
+                        python3 $guard --repo $repo --policy $policy --allow-path "$repo/$src_rel" --accept-path
+                        or begin
+                            echo "dots: auto-allow failed; use dots-capture explicitly: $target" >&2
+                            return 1
+                        end
+                    else
+                        printf '%s\n' $pout >&2
+                        set -a skipped_auto "$rel (needs allowlist review)"
+                        continue
+                    end
                 end
                 set -a validated_targets "$target"
                 set -a validated_sources "$repo/$src_rel"
@@ -133,6 +214,14 @@ function dots --description "Review and push already-captured public dotfile cha
             for target in $validated_targets
                 set -l src $validated_sources[$idx]
                 set idx (math $idx + 1)
+                # Never clobber direct source edits that differ from home.
+                if not cmp -s -- "$target" "$src"
+                    if not git -C $repo diff --quiet HEAD -- "$src" 2>/dev/null
+                        echo "dots: $target has direct source edits differing from home; resolve manually" >&2
+                        git -C $repo reset -q
+                        return 1
+                    end
+                end
                 chezmoi re-add -- "$target"
                 or return 1
                 set -l cout (python3 $guard --repo $repo --policy $policy --check-path "$src" 2>&1)
@@ -151,6 +240,12 @@ function dots --description "Review and push already-captured public dotfile cha
     end
 
     # Stage remaining tracked modifications except hooks. Hooks never auto-stage.
+    # New validated sources are added explicitly (never re-added: that would
+    # destroy templates); re-add would also refuse them.
+    for src in $auto_new_sources
+        git -C $repo add -- "$src"
+        or return 1
+    end
     git -C $repo add -u -- . ':!.githooks'
     or return 1
     set -l hook_dirty (git -C $repo status --porcelain -- .githooks 2>/dev/null)
