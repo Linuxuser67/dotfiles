@@ -23,6 +23,8 @@ README.md
 **/dot_git/**
 **/cache/**
 **/caches/**
+**/__pycache__/**
+**/*.pyc
 **/logs/**
 **/history/**
 **/state/**

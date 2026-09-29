@@ -11,7 +11,13 @@ if [ ! -x "$guard" ]; then
     printf '%s\n' 'guard-error: immutable upload guard is unavailable' >&2
     exit 2
 fi
-exec python3 "$guard" \
+if out=$(python3 "$guard" \
     --repo "$root" \
     --policy "$policy" \
-    --staged
+    --staged 2>&1); then
+    :
+else
+    status=$?
+    printf '%s\n' "$out"
+    exit "$status"
+fi
