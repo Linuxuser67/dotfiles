@@ -21,7 +21,7 @@ My personal config files managed with [chezmoi](https://www.chezmoi.io/).
 ## Install
 
 ```bash
-chezmoi init --apply https://github.com/houssemko/dotfiles.git
+chezmoi init --apply https://github.com/Linuxuser67/dotfiles.git
 ```
 
 ## Daily operations
