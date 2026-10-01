@@ -152,6 +152,11 @@ function dots --description "Review and push already-captured public dotfile cha
                     continue
                 end
                 if not test -f "$target"
+                    # Directories show up in chezmoi status; only files are
+                    # capturable, and that is expected rather than skippable.
+                    if test -d "$target"
+                        continue
+                    end
                     set -a skipped_auto "$rel (not a regular file)"
                     continue
                 end
