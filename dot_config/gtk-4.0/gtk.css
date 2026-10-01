@@ -1,0 +1,52 @@
+/* macOS-like translucent sidebar */
+
+window:not(.blackbox-main-window) {
+    background-color: color-mix(in srgb, var(--window-bg-color) 90%, transparent);
+}
+
+/* Universal terminal exclusion - let VTE / GTK terminals control their own opacity */
+window.blackbox-main-window.background,
+window.blackbox-main-window {
+    background: transparent;
+    background-color: transparent;
+}
+
+
+/* Sidebar / Navigation sidebar - transparent, shows blurred window behind */
+.sidebar-pane,
+.sidebar,
+.navigation-sidebar {
+    background-color: transparent;
+}
+
+/* Content pane */ 
+.content-pane {
+    background-color: color-mix(in srgb, var(--view-bg-color) 80%, transparent);
+}
+
+/* Cards and boxed lists - slight transparency to differentiate from content */
+.card,
+list.boxed-list,
+list.boxed-list-separate > row {
+    background-color: color-mix(in srgb, var(--card-bg-color) 85%, transparent);
+}
+
+/* Selected/active states - uses accent colors that adapt to theme */
+button.flat:checked,
+toggle-group > toggle:checked,
+tab:selected,
+row:selected {
+    background-color: var(--active-toggle-bg-color);
+}
+
+/* Banner - accent with transparency */
+banner revealer widget {
+    background-color: color-mix(in srgb, var(--accent-bg-color) 30%, transparent);
+}
+
+/* Status page - transparent */
+statuspage {
+    background-color: transparent;
+}
+
+
