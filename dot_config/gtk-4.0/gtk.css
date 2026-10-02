@@ -1,16 +1,8 @@
 /* macOS-like translucent sidebar */
 
-window:not(.blackbox-main-window) {
+window {
     background-color: color-mix(in srgb, var(--window-bg-color) 90%, transparent);
 }
-
-/* Universal terminal exclusion - let VTE / GTK terminals control their own opacity */
-window.blackbox-main-window.background,
-window.blackbox-main-window {
-    background: transparent;
-    background-color: transparent;
-}
-
 
 /* Sidebar / Navigation sidebar - transparent, shows blurred window behind */
 .sidebar-pane,
