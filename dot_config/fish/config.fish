@@ -22,13 +22,6 @@ set -x FZF_DEFAULT_COMMAND 'fd --type f --hidden --follow --exclude .git'
 # ante
 fish_add_path "$HOME/.ante/bin"
 
-# Command-line colors follow the EFFECTIVE terminal theme (see term-is-dark):
-# BlackBox can pin dark/light independently of GNOME, so GNOME color-scheme
-# alone picks wrong colors. GLOBAL (per-shell) vars: each shell detects its
-# own terminal via ancestry, so BlackBox and Console never fight over shared
-# state. The postexec hook below re-checks after every command.
-# Overrides conf.d/fish_frozen_theme.fish (built for dark bg: neon green command,
-# light-grey params vanish on white). Accepted/completed text uses these.
 if ~/.local/bin/term-is-dark 2>/dev/null
     set -e fish_color_autosuggestion; set -g fish_color_autosuggestion b0b0b0
     set -e fish_color_command; set -g fish_color_command 5fff00
@@ -45,12 +38,7 @@ else
     set -e fish_color_quote; set -g fish_color_quote ff0000
 end
 
-# Self-heal: re-check effective terminal theme after every command so a shell
-# that started in the other mode corrects itself. Per-shell globals only —
-# never touches shared state. Only writes when something differs.
 function __gnome_theme_autosync --on-event fish_postexec
-    # NOTE: locals must be DECLARED at function top level — `set -l` inside an
-    # if-block is scoped to that block and vanishes at `end`.
     set -l want_suggest; set -l want_command; set -l want_param
     set -l want_comment; set -l want_error; set -l want_quote
     if ~/.local/bin/term-is-dark 2>/dev/null
