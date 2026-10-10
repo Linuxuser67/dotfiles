@@ -12,7 +12,7 @@ palette-harmonious = true
 theme = Monokai Pro
 window-subtitle = working-directory
 
-background-opacity = 0.8
+background-opacity = 0.5
 background-blur = true
 
 window-padding-balance = true
