@@ -1,6 +1,6 @@
 /* Window */
 window {
-    background: color-mix(in srgb, var(--window-bg-color) 70%, transparent);
+    background: color-mix(in srgb, var(--window-bg-color) 80%, transparent);
     backdrop-filter: blur(10px);
 }
 
@@ -45,7 +45,7 @@ popover > contents,
 
 popover > contents,
 .floating-bar {
-    background: color-mix(in srgb, var(--popover-bg-color) 60%, transparent);
+    background: color-mix(in srgb, var(--popover-bg-color) 80%, transparent);
 }
 
 
