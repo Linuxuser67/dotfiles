@@ -1,44 +1,51 @@
-/* macOS-like translucent sidebar */
-
+/* Window */
 window {
-    background-color: color-mix(in srgb, var(--window-bg-color) 90%, transparent);
+    background: color-mix(in srgb, var(--window-bg-color) 70%, transparent);
+    backdrop-filter: blur(10px);
 }
 
-/* Sidebar / Navigation sidebar - transparent, shows blurred window behind */
+/* Content */
+.content-pane {
+    background: color-mix(in srgb, var(--view-bg-color) 30%, transparent);
+}
+
+/* Sidebar */
 .sidebar-pane,
 .sidebar,
 .navigation-sidebar {
-    background-color: transparent;
+    background: transparent;
 }
 
-/* Content pane */ 
-.content-pane {
-    background-color: color-mix(in srgb, var(--view-bg-color) 80%, transparent);
+headerbar,
+.toolbar,
+toolbarview,
+actionbar,
+content-view,
+scrolledwindow > viewport,
+listview,
+gridview,
+columnview,
+textview,
+textview text,
+statuspage {
+    background: transparent;
 }
 
-/* Cards and boxed lists - slight transparency to differentiate from content */
+/* Cards */
 .card,
 list.boxed-list,
 list.boxed-list-separate > row {
-    background-color: color-mix(in srgb, var(--card-bg-color) 85%, transparent);
+    background: color-mix(in srgb, var(--card-bg-color) 70%, transparent);
 }
 
-/* Selected/active states - uses accent colors that adapt to theme */
-button.flat:checked,
-toggle-group > toggle:checked,
-tab:selected,
-row:selected {
-    background-color: var(--active-toggle-bg-color);
+popover > contents,
+.floating-bar {
+    backdrop-filter: blur(10px);
 }
 
-/* Banner - accent with transparency */
-banner revealer widget {
-    background-color: color-mix(in srgb, var(--accent-bg-color) 30%, transparent);
-}
-
-/* Status page - transparent */
-statuspage {
-    background-color: transparent;
+popover > contents,
+.floating-bar {
+    background: color-mix(in srgb, var(--popover-bg-color) 60%, transparent);
 }
 
 
