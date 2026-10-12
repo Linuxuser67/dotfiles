@@ -122,6 +122,7 @@ function dots --description "Review and push already-captured public dotfile cha
             set -l validated_targets
             set -l validated_sources
             set -l skipped_auto
+            set -l managed (chezmoi managed 2>/dev/null)
             for line in $cstatus
                 set -l fields (string split -n ' ' -- $line)
                 if test (count $fields) -lt 2
@@ -134,6 +135,45 @@ function dots --description "Review and push already-captured public dotfile cha
                     continue
                 end
                 set -l target "$HOME/$rel"
+                set -l st1 (string sub -s 1 -l 1 -- $fields[1])
+                if test "$st1" = D
+                    # Deleted in home: propagate by forgetting the source.
+                    # Removals cannot leak content, so no content scan applies;
+                    # directories and unmanaged paths still need explicit review.
+                    if test -e "$target"
+                        set -a skipped_auto "$rel (status deleted but target exists)"
+                        continue
+                    end
+                    if not contains -- "$rel" $managed
+                        continue
+                    end
+                    set -l src (chezmoi source-path -- "$target" 2>/dev/null)
+                    if not set -q src[1]
+                        continue
+                    end
+                    set -l src_candidate $src[1]
+                    if not string match -q -r '^/' -- "$src_candidate"
+                        set src_candidate "$repo/$src_candidate"
+                    end
+                    set -l src_abs (realpath -- "$src_candidate" 2>/dev/null)
+                    set -l src_rel (realpath --relative-to="$repo" -- "$src_abs" 2>/dev/null)
+                    if test -z "$src_abs"; or test -z "$src_rel"; or string match -q -r '^\.\./' -- "$src_rel"
+                        set -a skipped_auto "$rel (source outside repo)"
+                        continue
+                    end
+                    if not test -f "$src_abs"
+                        set -a skipped_auto "$rel (not a file source; explicit review required)"
+                        continue
+                    end
+                    if string match -q -- '.githooks/*' "$src_rel"; or test "$src_rel" = .githooks
+                        set -a skipped_auto "$rel (hooks need explicit review)"
+                        continue
+                    end
+                    chezmoi forget --force -- "$target"
+                    or return 1
+                    echo "dots: auto-forgot deleted target: $rel" >&2
+                    continue
+                end
                 if test -L "$target"
                     set -a skipped_auto "$rel (symlink)"
                     continue

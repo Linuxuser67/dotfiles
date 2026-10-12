@@ -73,4 +73,4 @@ The source dir follows chezmoi conventions:
 `private_fish_variables`, OpenCode service/session state, credentials, and nested
 Git metadata are local-only and must not be added to the public source.
 
-Repo-only files (not managed by chezmoi): `README.md`, `.gitignore`, `.chezmoiignore`.
+Repo-only files (not managed by chezmoi): `README.md`, `.gitignore`, `.chezmoiignore`, `.chezmoi.toml.tmpl` (chezmoi's own config template).
