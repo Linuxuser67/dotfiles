@@ -1,5 +1,7 @@
 /* Window */
-window {
+window,
+popover > contents,
+.floating-bar {
     background: color-mix(in srgb, var(--window-bg-color) 80%, transparent);
     backdrop-filter: blur(10px);
 }
@@ -9,13 +11,29 @@ window {
     background: color-mix(in srgb, var(--view-bg-color) 30%, transparent);
 }
 
-/* Sidebar */
-.sidebar-pane,
-.sidebar,
-.navigation-sidebar {
-    background: transparent;
+.card,
+list.boxed-list,
+list.boxed-list-separate > row {
+    background: color-mix(in srgb, var(--card-bg-color) 70%, transparent);
 }
 
+popover > contents,
+.floating-bar {
+    background: color-mix(in srgb, var(--popover-bg-color) 70%, transparent);
+}
+
+.category-tile {
+    background: color-mix(in srgb, var(--card-bg-color) 70%, transparent);
+}
+
+dialog sheet {
+    background: color-mix(in srgb, var(--window-bg-color) 50%, transparent);
+    backdrop-filter: blur(10px);
+}
+
+.sidebar-pane,
+.sidebar,
+.navigation-sidebar,
 headerbar,
 .toolbar,
 toolbarview,
@@ -27,25 +45,12 @@ gridview,
 columnview,
 textview,
 textview text,
+sourceview,
+sourceview text,
 statuspage {
     background: transparent;
 }
 
-/* Cards */
-.card,
-list.boxed-list,
-list.boxed-list-separate > row {
-    background: color-mix(in srgb, var(--card-bg-color) 70%, transparent);
-}
 
-popover > contents,
-.floating-bar {
-    backdrop-filter: blur(10px);
-}
-
-popover > contents,
-.floating-bar {
-    background: color-mix(in srgb, var(--popover-bg-color) 80%, transparent);
-}
 
 
