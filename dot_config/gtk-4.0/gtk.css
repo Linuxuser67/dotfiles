@@ -1,15 +1,15 @@
 /* Windows */
 window {
-    background: color-mix(in srgb, var(--window-bg-color) 80%, transparent);
+    background: color-mix(in srgb, var(--window-bg-color) 70%, transparent);
     backdrop-filter: blur(10px);
 }
 window.dialog, window.popup {
-    background: color-mix(in srgb, var(--window-bg-color) 80%, transparent);
+    background: color-mix(in srgb, var(--window-bg-color) 70%, transparent);
     backdrop-filter: blur(15px);
 }
-window:backdrop { background: color-mix(in srgb, var(--window-bg-color) 80%, transparent); }
+window:backdrop { background: color-mix(in srgb, var(--window-bg-color) 70%, transparent); }
 popover > contents, popover.menu > contents {
-    background: color-mix(in srgb, var(--window-bg-color) 85%, transparent);
+    background: color-mix(in srgb, var(--window-bg-color) 75%, transparent);
     backdrop-filter: blur(10px);
 }
 dialog sheet {
@@ -17,13 +17,13 @@ dialog sheet {
     backdrop-filter: blur(15px);
 }
 .floating-bar, banner {
-    background: color-mix(in srgb, var(--window-bg-color) 80%, transparent);
+    background: color-mix(in srgb, var(--window-bg-color) 70%, transparent);
     backdrop-filter: blur(10px);
 }
 
 /* Cards and lists */
 .card, list.boxed-list, list.boxed-list-separate > row {
-    background: color-mix(in srgb, var(--card-bg-color) 90%, transparent);
+    background: color-mix(in srgb, var(--card-bg-color) 80%, transparent);
 }
 .category-tile { background: color-mix(in srgb, var(--card-bg-color) 70%, transparent); }
 
