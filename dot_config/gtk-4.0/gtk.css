@@ -3,19 +3,22 @@ window {
     background: color-mix(in srgb, var(--window-bg-color) 70%, transparent);
     backdrop-filter: blur(10px);
 }
+
 window.dialog, window.popup {
-    background: color-mix(in srgb, var(--window-bg-color) 70%, transparent);
+    background: color-mix(in srgb, var(--window-bg-color) 80%, transparent);
     backdrop-filter: blur(15px);
 }
-window:backdrop { background: color-mix(in srgb, var(--window-bg-color) 70%, transparent); }
+
 popover > contents, popover.menu > contents {
     background: color-mix(in srgb, var(--window-bg-color) 75%, transparent);
     backdrop-filter: blur(10px);
 }
+
 dialog sheet {
-    background: color-mix(in srgb, var(--window-bg-color) 50%, transparent);
+    background: color-mix(in srgb, var(--window-bg-color) 60%, transparent);
     backdrop-filter: blur(15px);
 }
+
 .floating-bar, banner {
     background: color-mix(in srgb, var(--window-bg-color) 70%, transparent);
     backdrop-filter: blur(10px);
