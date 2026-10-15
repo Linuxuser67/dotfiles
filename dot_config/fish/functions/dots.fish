@@ -361,17 +361,41 @@ function dots --description "Review and push already-captured public dotfile cha
             return 1
         end
         # Remote moved ahead (e.g. a GitHub web edit). Replay local commits
-        # on top, local content winning overlaps (same as the manual fix);
-        # re-scan the rewritten history, then retry the push once.
+        # on top; on conflicts the NEWER side wins, per file (author dates,
+        # ties -> local). Re-scan the rewritten history, then retry once.
         set -l branch (git -C $repo branch --show-current)
         set -l old_remote (git -C $repo rev-parse "origin/$branch" 2>/dev/null)
-        echo "dots: remote moved ahead; rebasing onto $old_remote (local edits win overlaps)" >&2
+        echo "dots: remote moved ahead; rebasing onto $old_remote (newer side wins conflicts)" >&2
         git -C $repo fetch origin $branch
         or return 1
-        git -C $repo rebase -X theirs "origin/$branch"
-        or begin
+        git -C $repo rebase "origin/$branch"
+        set -l rebase_status $status
+        while test $rebase_status -ne 0
+            set -l conflicted (git -C $repo diff --name-only --diff-filter=U)
+            if test (count $conflicted) -eq 0
+                break
+            end
+            for f in $conflicted
+                set -l lt (git -C $repo log -1 --format=%at "origin/$branch".."$branch" -- "$f")
+                set -l rt (git -C $repo log -1 --format=%at "$branch".."origin/$branch" -- "$f")
+                test -n "$lt"; or set lt 0
+                test -n "$rt"; or set rt 0
+                if test $lt -ge $rt
+                    # In a rebase, --theirs is the local commit being applied.
+                    git -C $repo checkout --theirs -- "$f"
+                    echo "dots: conflict kept local (newer): $f" >&2
+                else
+                    git -C $repo checkout --ours -- "$f"
+                    echo "dots: conflict kept remote (newer): $f" >&2
+                end
+                git -C $repo add -- "$f"
+            end
+            GIT_EDITOR=true git -C $repo rebase --continue
+            set rebase_status $status
+        end
+        if test $rebase_status -ne 0
             git -C $repo rebase --abort
-            echo "dots: rebase failed; push manually after resolving" >&2
+            echo "dots: rebase could not be auto-resolved; push manually after resolving" >&2
             return 1
         end
         python3 $guard --repo $repo --policy $policy --repository
