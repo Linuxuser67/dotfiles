@@ -37,7 +37,7 @@ toast {
 
 /* Cards and lists */
 .card, list.boxed-list, list.boxed-list-separate > row {
-    background: color-mix(in srgb, var(--card-bg-color) 50%, transparent);
+    background: color-mix(in srgb, var(--card-bg-color) 70%, transparent);
 }
 .category-tile { background: color-mix(in srgb, var(--card-bg-color) 70%, transparent); }
 
@@ -55,9 +55,13 @@ toolbarview > .top-bar, toolbarview > .bottom-bar {
     background: transparent;
 }
 
-scrolledwindow, viewport, stack, listview, gridview, columnview, flowbox,
+scrolledwindow, viewport, stack, list, listview, gridview, columnview, flowbox, .view:not(window),
 textview, textview.view, textview text, sourceview, sourceview text,
 preferencespage, preferencesgroup, statuspage, notebook, notebook > header,
 notebook > header > tabs, notebook > header > tabs > tab {
+    background: transparent;
+}
+
+textview > border, gutter {
     background: transparent;
 }
