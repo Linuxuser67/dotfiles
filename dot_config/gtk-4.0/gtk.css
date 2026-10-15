@@ -55,7 +55,7 @@ toolbarview > .top-bar, toolbarview > .bottom-bar {
     background: transparent;
 }
 
-scrolledwindow, viewport, stack, list, listview, gridview, columnview, flowbox, .view:not(window),
+scrolledwindow, viewport, stack, list, listview, gridview, columnview, flowbox, .view:not(window), .background:not(window),
 textview, textview.view, textview text, sourceview, sourceview text,
 preferencespage, preferencesgroup, statuspage, notebook, notebook > header,
 notebook > header > tabs, notebook > header > tabs > tab {
