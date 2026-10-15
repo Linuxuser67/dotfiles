@@ -354,5 +354,29 @@ function dots --description "Review and push already-captured public dotfile cha
     or return 1
     python3 $guard --repo $repo --policy $policy --repository
     or return 1
-    git -C $repo push
+    set -l push_out (git -C $repo push 2>&1)
+    if test $status -ne 0
+        if not string match -q -r 'fetch first|non-fast-forward|\[rejected\]' -- $push_out
+            printf '%s\n' $push_out >&2
+            return 1
+        end
+        # Remote moved ahead (e.g. a GitHub web edit). Replay local commits
+        # on top, local content winning overlaps (same as the manual fix);
+        # re-scan the rewritten history, then retry the push once.
+        set -l branch (git -C $repo branch --show-current)
+        set -l old_remote (git -C $repo rev-parse "origin/$branch" 2>/dev/null)
+        echo "dots: remote moved ahead; rebasing onto $old_remote (local edits win overlaps)" >&2
+        git -C $repo fetch origin $branch
+        or return 1
+        git -C $repo rebase -X theirs "origin/$branch"
+        or begin
+            git -C $repo rebase --abort
+            echo "dots: rebase failed; push manually after resolving" >&2
+            return 1
+        end
+        python3 $guard --repo $repo --policy $policy --repository
+        or return 1
+        git -C $repo push
+        or return 1
+    end
 end
