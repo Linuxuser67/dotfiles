@@ -27,22 +27,22 @@ dialog sheet, bottom-sheet > sheet {
 /* Toast */
 toast {
     color: var(--window-fg-color);
-    --standalone-color-oklab: min(l, 0.5) a b;
+    --standalone-color-oklab: min(l, 0.1) a b;
 }
 @media (prefers-color-scheme: dark) {
     toast {
-        --standalone-color-oklab: max(l, 0.85) a b;
+        --standalone-color-oklab: max(l, 0.3) a b;
     }
 }
 
 /* Cards and lists */
 .card, list.boxed-list, list.boxed-list-separate > row {
-    background: color-mix(in srgb, var(--card-bg-color) 70%, transparent);
+    background: color-mix(in srgb, var(--card-bg-color) 30%, transparent);
 }
 .category-tile { background: color-mix(in srgb, var(--card-bg-color) 70%, transparent); }
 
 /* Content, navigation and toolbars */
-.content-pane { background: color-mix(in srgb, var(--view-bg-color) 20%, transparent); }
+.content-pane { background: color-mix(in srgb, var(--view-bg-color) 30%, transparent); }
 .sidebar-pane, .sidebar, .navigation-sidebar, stacksidebar.sidebar,
 navigation-split-view, navigation-view, content-view, .content-view,
 headerbar, .titlebar, toolbar, .toolbar, toolbarview, actionbar,
