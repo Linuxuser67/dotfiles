@@ -10,7 +10,7 @@ window.dialog {
 }
 
 popover > arrow, popover > contents, popover.menu > contents {
-    background: color-mix(in srgb, var(--window-bg-color) 60%, transparent);
+    background: color-mix(in srgb, var(--window-bg-color) 40%, transparent);
     backdrop-filter: blur(10px);
 }
 
@@ -19,19 +19,14 @@ dialog sheet, bottom-sheet > sheet {
     backdrop-filter: blur(15px);
 }
 
-.floating-bar, toast, banner > revealer > widget {
-    background: color-mix(in srgb, var(--window-bg-color) 60%, transparent);
-    backdrop-filter: blur(10px);
-}
-
 /* Toast */
 toast {
     color: var(--window-fg-color);
-    --standalone-color-oklab: min(l, 0.1) a b;
+    --standalone-color-oklab: min(l, 0.4) a b;
 }
 @media (prefers-color-scheme: dark) {
     toast {
-        --standalone-color-oklab: max(l, 0.3) a b;
+        --standalone-color-oklab: max(l, 0.8) a b;
     }
 }
 
@@ -43,7 +38,8 @@ toast {
 
 /* Content, navigation and toolbars */
 .content-pane { background: color-mix(in srgb, var(--view-bg-color) 30%, transparent); }
-.sidebar-pane, .sidebar, .navigation-sidebar, stacksidebar.sidebar,
+
+.floating-bar, toast, banner > revealer > widget.sidebar-pane, .sidebar, .navigation-sidebar, stacksidebar.sidebar,
 navigation-split-view, navigation-view, content-view, .content-view,
 headerbar, .titlebar, toolbar, .toolbar, toolbarview, actionbar,
 searchbar, menubar, tabbar, viewswitcherbar, viewswitcher {
