@@ -4,11 +4,6 @@ window {
     backdrop-filter: blur(10px);
 }
 
-window.dialog {
-    background: color-mix(in srgb, var(--window-bg-color) 70%, transparent);
-    backdrop-filter: blur(15px);
-}
-
 popover > arrow, popover > contents, popover.menu > contents {
     background: color-mix(in srgb, var(--window-bg-color) 40%, transparent);
     backdrop-filter: blur(10px);
@@ -19,19 +14,9 @@ dialog sheet, bottom-sheet > sheet {
     backdrop-filter: blur(15px);
 }
 
-/* Toast */
-toast {
-    color: var(--window-fg-color);
-    --standalone-color-oklab: min(l, 0.4) a b;
-}
-@media (prefers-color-scheme: dark) {
-    toast {
-        --standalone-color-oklab: max(l, 0.8) a b;
-    }
-}
 
 /* Cards and lists */
-.card, list.boxed-list, list.boxed-list-separate > row {
+.floating-bar, toast, banner > revealer > widget .card, list.boxed-list, list.boxed-list-separate > row {
     background: color-mix(in srgb, var(--card-bg-color) 30%, transparent);
 }
 .category-tile { background: color-mix(in srgb, var(--card-bg-color) 70%, transparent); }
@@ -39,7 +24,7 @@ toast {
 /* Content, navigation and toolbars */
 .content-pane { background: color-mix(in srgb, var(--view-bg-color) 30%, transparent); }
 
-.floating-bar, toast, banner > revealer > widget.sidebar-pane, .sidebar, .navigation-sidebar, stacksidebar.sidebar,
+.sidebar-pane, .sidebar, .navigation-sidebar, stacksidebar.sidebar,
 navigation-split-view, navigation-view, content-view, .content-view,
 headerbar, .titlebar, toolbar, .toolbar, toolbarview, actionbar,
 searchbar, menubar, tabbar, viewswitcherbar, viewswitcher {
@@ -60,4 +45,15 @@ notebook > header > tabs, notebook > header > tabs > tab {
 
 textview > border, gutter {
     background: transparent;
+}
+
+/* Toast */
+toast {
+    color: var(--window-fg-color);
+    --standalone-color-oklab: min(l, 0.4) a b;
+}
+@media (prefers-color-scheme: dark) {
+    toast {
+        --standalone-color-oklab: max(l, 0.8) a b;
+    }
 }
