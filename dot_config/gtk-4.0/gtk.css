@@ -1,28 +1,26 @@
 /* Windows */
 window {
-    background: color-mix(in srgb, var(--window-bg-color) 70%, transparent);
-    backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--window-bg-color) 80%, transparent);
+    backdrop-filter: blur(20px);
 }
 
 toast, banner > revealer > widget, popover > arrow, popover > contents, popover.menu > contents {
     background: color-mix(in srgb, var(--window-bg-color) 50%, transparent);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
 }
 
 dialog sheet, bottom-sheet > sheet {
-    background: color-mix(in srgb, var(--window-bg-color) 70%, transparent);
-    backdrop-filter: blur(20px);
+    background: color-mix(in srgb, var(--window-bg-color) 50%, transparent);
+    backdrop-filter: blur(10px);
 }
 
 /* Cards and lists */
 .floating-bar, .card, list.boxed-list, list.boxed-list-separate > row {
-    background: color-mix(in srgb, var(--card-bg-color) 70%, transparent);
+    background: color-mix(in srgb, var(--card-bg-color) 40%, transparent);
 }
 
-.category-tile { background: color-mix(in srgb, var(--card-bg-color) 50%, transparent); }
-
 /* Content, navigation and toolbars */
-.content-pane { background: color-mix(in srgb, var(--view-bg-color) 30%, transparent); }
+.content-pane { background: color-mix(in srgb, var(--view-bg-color) 20%, transparent); }
 
 .sidebar-pane, .sidebar, .navigation-sidebar, stacksidebar.sidebar,
 navigation-split-view, navigation-view, content-view, .content-view,
@@ -36,7 +34,7 @@ toolbarview > .top-bar, toolbarview > .bottom-bar {
     background: transparent;
 }
 
-scrolledwindow, viewport, stack, list, listview, gridview, columnview, flowbox, .view:not(window), .background:not(window):not(sheet),
+scrolledwindow, viewport, stack, list, listview, gridview, columnview, flowbox, .view:not(window), .background:not(window):not(sheet):not(tooltip),
 textview, textview.view, textview text, sourceview, sourceview text,
 preferencespage, preferencesgroup, statuspage, notebook, notebook > header,
 notebook > header > tabs, notebook > header > tabs > tab {
