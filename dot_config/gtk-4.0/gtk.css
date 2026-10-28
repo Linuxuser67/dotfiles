@@ -1,16 +1,16 @@
 /* Windows */
-window { background: color-mix(in srgb, var(--window-bg-color) 80%, transparent);
+window { background: color-mix(in srgb, var(--window-bg-color) 85%, transparent);
     backdrop-filter: blur(15px);}
 
 toast, banner > revealer > widget, popover > arrow, popover > contents, popover.menu > contents { background: color-mix(in srgb, var(--window-bg-color) 70%, transparent);
-    backdrop-filter: blur(15px); }
+    backdrop-filter: blur(10px); }
 
 dialog sheet, bottom-sheet > sheet { background: color-mix(in srgb, var(--window-bg-color) 50%, transparent);
     backdrop-filter: blur(15px); }
 
 /* Cards and lists */
 .floating-bar, .card, list.boxed-list, list.boxed-list-separate > row {
-    background: color-mix(in srgb, var(--card-bg-color) 50%, transparent);}
+    background: color-mix(in srgb, var(--card-bg-color) 60%, transparent);}
 
 /* Content, navigation and toolbars */
 .content-pane { background: color-mix(in srgb, var(--view-bg-color) 20%, transparent); }
