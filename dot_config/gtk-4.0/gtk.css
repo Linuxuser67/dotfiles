@@ -1,6 +1,6 @@
 /* Windows */
-window { background: color-mix(in srgb, var(--window-bg-color) 85%, transparent);
-    backdrop-filter: blur(20px);}
+window { background: color-mix(in srgb, var(--window-bg-color) 80%, transparent);
+    backdrop-filter: blur(30px);}
 
 toast, banner > revealer > widget, popover > arrow, popover > contents, popover.menu > contents { background: color-mix(in srgb, var(--window-bg-color) 70%, transparent);
     backdrop-filter: blur(10px); }
