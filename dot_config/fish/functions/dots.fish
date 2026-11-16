@@ -114,10 +114,6 @@ function dots --description "Review and push already-captured public dotfile cha
 
     if type -q chezmoi
         set -l cstatus (chezmoi status 2>/dev/null)
-        if test (count $cstatus) -gt 20
-            echo "dots: too many home changes; capture explicitly, e.g. dots-capture ~/.config/path/to/file" >&2
-            return 1
-        end
         if test (count $cstatus) -gt 0
             set -l validated_targets
             set -l validated_sources
