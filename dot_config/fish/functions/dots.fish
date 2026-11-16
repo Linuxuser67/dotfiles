@@ -350,7 +350,9 @@ function dots --description "Review and push already-captured public dotfile cha
     or return 1
     python3 $guard --repo $repo --policy $policy --repository
     or return 1
-    set -l push_out (git -C $repo push 2>&1)
+    # A stale GITHUB_TOKEN in the environment overrides gh's keyring login;
+    # git network calls must use the working credential.
+    set -l push_out (env -u GITHUB_TOKEN git -C $repo push 2>&1)
     if test $status -ne 0
         if not string match -q -r 'fetch first|non-fast-forward|\[rejected\]' -- $push_out
             printf '%s\n' $push_out >&2
@@ -362,7 +364,7 @@ function dots --description "Review and push already-captured public dotfile cha
         set -l branch (git -C $repo branch --show-current)
         set -l old_remote (git -C $repo rev-parse "origin/$branch" 2>/dev/null)
         echo "dots: remote moved ahead; rebasing onto $old_remote (newer side wins conflicts)" >&2
-        git -C $repo fetch origin $branch
+        env -u GITHUB_TOKEN git -C $repo fetch origin $branch
         or return 1
         git -C $repo rebase "origin/$branch"
         set -l rebase_status $status
@@ -396,7 +398,7 @@ function dots --description "Review and push already-captured public dotfile cha
         end
         python3 $guard --repo $repo --policy $policy --repository
         or return 1
-        git -C $repo push
+        env -u GITHUB_TOKEN git -C $repo push
         or return 1
     end
 end
