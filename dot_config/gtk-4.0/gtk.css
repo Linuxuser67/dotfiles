@@ -1,7 +1,7 @@
 /* Windows */
 window 
    { background: color-mix(in srgb, var(--window-bg-color) 90%, transparent);
-     backdrop-filter: blur(30px);
+     backdrop-filter: blur(20px);
 }
 
 toast, banner > revealer > widget, 
