@@ -1,6 +1,7 @@
 source /usr/share/cachyos-fish-config/cachyos-config.fish
 
 # Abbreviations
+abbr rate sudo cachyos-rate-mirrors
 abbr wt curl wttr.in/Monastir
 abbr ve pacman -Qs
 abbr ff fastfetch

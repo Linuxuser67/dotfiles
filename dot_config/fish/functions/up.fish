@@ -45,12 +45,6 @@ function up --description 'Update system and check maintenance (topgrade-style)'
         echo "    "$msg
     end
 
-    function _up_ask -a prompt
-        echo -n (set_color cyan)"  ?"(set_color normal)" $prompt "(set_color brblack)"[y/N]"(set_color normal)" "
-        read -l answer
-        string match -qr '^[yY]' -- "$answer"
-    end
-
     function _up_track -a name state
         set -a _up_names $name
         set -a _up_status $state
@@ -114,16 +108,12 @@ function up --description 'Update system and check maintenance (topgrade-style)'
         for p in $orphans
             _up_item $p
         end
-        if _up_ask 'Remove orphan packages and their dependencies?'
-            if $su_cmd pacman --noconfirm -Rns $orphans
-                _up_ok 'Orphan packages removed'
-                _up_track Orphans OK
-            else
-                _up_fail 'Orphan removal failed'
-                _up_track Orphans FAILED
-            end
+        if $su_cmd pacman --noconfirm -Rns $orphans
+            _up_ok 'Orphan packages removed'
+            _up_track Orphans OK
         else
-            _up_track Orphans SKIPPED
+            _up_fail 'Orphan removal failed'
+            _up_track Orphans FAILED
         end
     else
         _up_ok 'No orphan packages found'
@@ -140,23 +130,19 @@ function up --description 'Update system and check maintenance (topgrade-style)'
         if test -n "$uninst"; set uninstnum $uninst; end
         if test (math "$oldnum + $uninstnum") -gt 0
             _up_warn (math "$oldnum + $uninstnum")' cached package(s) can be pruned'
-            if _up_ask 'Prune old and uninstalled cached packages?'
-                set -l failed 0
-                if test $oldnum -gt 0
-                    $su_cmd paccache -rk3 > /dev/null; or set failed 1
-                end
-                if test $uninstnum -gt 0
-                    $su_cmd paccache -ruk0 > /dev/null; or set failed 1
-                end
-                if test $failed -eq 0
-                    _up_ok 'Package cache pruned'
-                    _up_track Cache OK
-                else
-                    _up_fail 'Cache prune failed'
-                    _up_track Cache FAILED
-                end
+            set -l failed 0
+            if test $oldnum -gt 0
+                $su_cmd paccache -rk3 > /dev/null; or set failed 1
+            end
+            if test $uninstnum -gt 0
+                $su_cmd paccache -ruk0 > /dev/null; or set failed 1
+            end
+            if test $failed -eq 0
+                _up_ok 'Package cache pruned'
+                _up_track Cache OK
             else
-                _up_track Cache SKIPPED
+                _up_fail 'Cache prune failed'
+                _up_track Cache FAILED
             end
         else
             _up_ok 'No cached packages to prune'
@@ -176,7 +162,8 @@ function up --description 'Update system and check maintenance (topgrade-style)'
         _up_track Kernel OK
     else
         _up_warn 'Pending kernel update — reboot required to apply it'
-        if _up_ask 'Reboot now?'
+        read -l -P (set_color cyan)"  ?"(set_color normal)" Reboot now? "(set_color green)"[Y/n]"(set_color normal)" " answer
+        if string match -qr '^([yY]|$)' -- "$answer"
             if systemctl reboot
                 _up_track Kernel OK
             else
@@ -196,16 +183,12 @@ function up --description 'Update system and check maintenance (topgrade-style)'
             for u in $unused
                 _up_item $u
             end
-            if _up_ask 'Remove unused Flatpak packages?'
-                if flatpak uninstall --unused -y > /dev/null
-                    _up_ok 'Unused Flatpak packages removed'
-                    _up_track 'Flatpak unused' OK
-                else
-                    _up_fail 'Flatpak cleanup failed'
-                    _up_track 'Flatpak unused' FAILED
-                end
+            if flatpak uninstall --unused -y > /dev/null
+                _up_ok 'Unused Flatpak packages removed'
+                _up_track 'Flatpak unused' OK
             else
-                _up_track 'Flatpak unused' SKIPPED
+                _up_fail 'Flatpak cleanup failed'
+                _up_track 'Flatpak unused' FAILED
             end
         else
             _up_ok 'No unused Flatpak packages'
@@ -223,16 +206,12 @@ function up --description 'Update system and check maintenance (topgrade-style)'
             for s in $svcs
                 _up_item $s
             end
-            if _up_ask 'Restart these services?'
-                if $su_cmd systemctl restart $svcs
-                    _up_ok 'Services restarted'
-                    _up_track 'Service restart' OK
-                else
-                    _up_fail 'Service restart failed'
-                    _up_track 'Service restart' FAILED
-                end
+            if $su_cmd systemctl restart $svcs
+                _up_ok 'Services restarted'
+                _up_track 'Service restart' OK
             else
-                _up_track 'Service restart' SKIPPED
+                _up_fail 'Service restart failed'
+                _up_track 'Service restart' FAILED
             end
         else
             _up_ok 'No services need a restart'
@@ -286,6 +265,6 @@ function up --description 'Update system and check maintenance (topgrade-style)'
     end
 
     functions -e _up_rule _up_next _up_mark \
-        _up_ok _up_warn _up_fail _up_item _up_ask _up_track
+        _up_ok _up_warn _up_fail _up_item _up_track
     set -e _up_names _up_status _up_started
 end
