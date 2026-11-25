@@ -41,6 +41,36 @@ function dots --description "Review and push already-captured public dotfile cha
     # auto-allowed (content scans + unapproved-path-only); anything else aborts.
     # Modified home targets go through validate-then-re-add below. Hooks,
     # binaries, and secrets always abort to manual dots-capture.
+    # Newly installed skills are unmanaged in home, so chezmoi status never
+    # reports them. Discover them and add only after the same guard checks
+    # used for every other target, before any source or git mutation.
+    # Nested .git metadata and binaries are not skills: skip, never publish.
+    set -l added_skills 0
+    set -l skipped_skills 0
+    if type -q chezmoi; and test -d "$HOME/.config/opencode/skills"
+        set -l managed_skills (chezmoi managed 2>/dev/null)
+        for f in (find "$HOME/.config/opencode/skills" -path '*/.git/*' -prune -o -type f -print 2>/dev/null)
+            set -l rel (realpath --relative-to="$HOME" -- "$f")
+            if contains -- "$rel" $managed_skills
+                continue
+            end
+            set -l gout (python3 $guard --repo $repo --policy $policy --check-target "$f" --target-root "$HOME" 2>&1)
+            or begin
+                set skipped_skills (math $skipped_skills + 1)
+                continue
+            end
+            chezmoi add "$f"
+            or return 1
+            set added_skills (math $added_skills + 1)
+        end
+        if test $added_skills -gt 0
+            echo "dots: auto-added $added_skills new skill files" >&2
+        end
+        if test $skipped_skills -gt 0
+            echo "dots: skipped $skipped_skills new skill files needing explicit review (use dots-capture)" >&2
+        end
+    end
+
     set -l untracked (git -C $repo ls-files --others --exclude-standard)
     set -l auto_new_sources
     if test (count $untracked) -gt 0
