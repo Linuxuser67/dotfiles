@@ -56,11 +56,22 @@ function dots --description "Review and push already-captured public dotfile cha
             end
             set -l gout (python3 $guard --repo $repo --policy $policy --check-target "$f" --target-root "$HOME" 2>&1)
             or begin
-                set skipped_skills (math $skipped_skills + 1)
+                # Archives are never auto-captured; they stay local by design.
+                if not string match -q -- '*target-binary*' $gout
+                    set skipped_skills (math $skipped_skills + 1)
+                end
                 continue
             end
-            chezmoi add "$f"
-            or return 1
+            chezmoi add "$f" 2>/dev/null
+            or begin
+                echo "dots: chezmoi add failed: $rel" >&2
+                return 1
+            end
+            # chezmoi ignores some files (e.g. package.json); add succeeds
+            # with only a warning, so verify before counting it as captured.
+            if not chezmoi source-path "$f" >/dev/null 2>&1
+                continue
+            end
             set added_skills (math $added_skills + 1)
         end
         if test $added_skills -gt 0
