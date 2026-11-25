@@ -152,29 +152,6 @@ function up --description 'Update system and check maintenance (topgrade-style)'
         _up_track Cache SKIPPED
     end
 
-    _up_next yellow 'Kernel reboot'
-    if systemd-detect-virt --container --quiet > /dev/null 2>&1
-        _up_track Kernel SKIPPED
-    else if pacman -Q kernel-modules-hook mkmm > /dev/null 2>&1
-        _up_track Kernel SKIPPED
-    else if test -f "/usr/lib/modules/"(uname -r)"/vmlinuz"
-        _up_ok 'Running kernel is installed'
-        _up_track Kernel OK
-    else
-        _up_warn 'Pending kernel update — reboot required to apply it'
-        read -l -P (set_color cyan)"  ?"(set_color normal)" Reboot now? "(set_color green)"[Y/n]"(set_color normal)" " answer
-        if string match -qr '^([yY]|$)' -- "$answer"
-            if systemctl reboot
-                _up_track Kernel OK
-            else
-                _up_fail 'Reboot failed'
-                _up_track Kernel FAILED
-            end
-        else
-            _up_track Kernel SKIPPED
-        end
-    end
-
     if command -q flatpak
         _up_next blue 'Flatpak unused'
         set -l unused (flatpak uninstall --unused < /dev/null 2>/dev/null | sed -n '/^ 1./,$p' | awk '{print $2}' | grep -v '^$' | sed '$d')
@@ -246,6 +223,29 @@ function up --description 'Update system and check maintenance (topgrade-style)'
         end
     else
         _up_track Services SKIPPED
+    end
+
+    _up_next yellow 'Kernel reboot'
+    if systemd-detect-virt --container --quiet > /dev/null 2>&1
+        _up_track Kernel SKIPPED
+    else if pacman -Q kernel-modules-hook mkmm > /dev/null 2>&1
+        _up_track Kernel SKIPPED
+    else if test -f "/usr/lib/modules/"(uname -r)"/vmlinuz"
+        _up_ok 'Running kernel is installed'
+        _up_track Kernel OK
+    else
+        _up_warn 'Pending kernel update — reboot required to apply it'
+        read -l -P (set_color cyan)"  ?"(set_color normal)" Reboot now? "(set_color green)"[Y/n]"(set_color normal)" " answer
+        if string match -qr '^([yY]|$)' -- "$answer"
+            if systemctl reboot
+                _up_track Kernel OK
+            else
+                _up_fail 'Reboot failed'
+                _up_track Kernel FAILED
+            end
+        else
+            _up_track Kernel SKIPPED
+        end
     end
 
     # Summary

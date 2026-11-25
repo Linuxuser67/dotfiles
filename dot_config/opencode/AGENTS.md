@@ -9,9 +9,9 @@ In repositories indexed by CodeGraph (a `.codegraph/` directory exists at the re
 If there is no `.codegraph/` directory, skip CodeGraph entirely — indexing is the user's decision.
 <!-- CODEGRAPH_END -->
 
-## Agent Skills (addyosmani/agent-skills v0.6.16, global)
+## Agent Skills (addyosmani/agent-skills v0.6.18, global)
 
-Skills live in `~/.config/opencode/skills/<name>/SKILL.md` (25 skills). Shared checklists live in `~/.config/opencode/references/` (resolves the `../../references/*.md` links inside skills). Personas live in `~/.config/opencode/agent/`. Commands live in `~/.config/opencode/command/`.
+Skills live in `~/.config/opencode/skills/<name>/SKILL.md` (26 skills). Shared checklists live in `~/.config/opencode/references/` (resolves the `../../references/*.md` links inside skills). Personas live in `~/.config/opencode/agent/`. Commands live in `~/.config/opencode/command/`.
 
 ### Core rules
 
@@ -56,4 +56,4 @@ DEFINE → `spec-driven-development` · PLAN → `planning-and-task-breakdown` �
 
 - Do NOT copy this repo's root `AGENTS.md`/`CLAUDE.md` into projects — those configure the upstream repo itself, not consumers.
 - Renames on install (to avoid overwriting existing config): pack `code-reviewer` persona → `staff-code-reviewer`; pack `/plan` → `/plan-breakdown`. All other names installed verbatim (no prior collisions).
-- Source: `~/Downloads/agent-skills-0.6.16` (see `agent-skills-install.json` for manifest). To update, re-copy `skills/*` + `references/*.md` and re-apply the two renames above.
+- Source: `~/Downloads/agent-skills-0.6.18` (see `agent-skills-install.json` for manifest). To update, re-copy `skills/*` + `references/*.md` and re-apply the two renames above.
