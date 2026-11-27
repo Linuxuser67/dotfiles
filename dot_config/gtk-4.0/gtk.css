@@ -1,18 +1,18 @@
 /* Windows */
 window 
    { background: color-mix(in srgb, var(--window-bg-color) 90%, transparent);
-     backdrop-filter: blur(20px);
+     backdrop-filter: blur(25px);
 }
 
 toast, banner > revealer > widget, 
 popover > arrow, popover > contents, 
 popover.menu > contents 
-  { background: color-mix(in srgb, var(--window-bg-color) 70%, transparent);
+  { background: color-mix(in srgb, var(--window-bg-color) 80%, transparent);
     backdrop-filter: blur(15px); 
 }
 
 dialog sheet, bottom-sheet > sheet 
-    { background: color-mix(in srgb, var(--window-bg-color) 40%, transparent);
+    { background: color-mix(in srgb, var(--window-bg-color) 50%, transparent);
       backdrop-filter: blur(15px); 
 }
 
